@@ -1,7 +1,5 @@
 package com.demo.librarychallenge.models.entity;
 
-import com.demo.librarychallenge.models.Book;
-
 import java.util.ArrayList;
 import java.util.List;
 

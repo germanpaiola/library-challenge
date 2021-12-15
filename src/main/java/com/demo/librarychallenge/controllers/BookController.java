@@ -1,10 +1,12 @@
 package com.demo.librarychallenge.controllers;
 
 
-import com.demo.librarychallenge.models.Book;
+import com.demo.librarychallenge.models.entity.Book;
 import com.demo.librarychallenge.services.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/book")
@@ -30,7 +32,8 @@ public class BookController {
     @PutMapping
     public ResponseEntity updateBook(@RequestBody String jsonRequest){
         try{
-
+            Book book = bookService.convertToObject(jsonRequest);
+            bookService.updateBook(book);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e);
         }
@@ -40,7 +43,8 @@ public class BookController {
     @DeleteMapping
     public ResponseEntity deleteBook(@RequestBody String jsonRequest){
         try{
-
+            Book book = bookService.convertToObject(jsonRequest);
+            bookService.deleteBook(book);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e);
         }
@@ -50,15 +54,9 @@ public class BookController {
     @GetMapping
     public ResponseEntity getBook(@RequestBody String jsonRequest){
         try{
-
-
-
-
-
-
-
-
-            return ResponseEntity.ok("Created");
+            List<Book> books = bookService.getBook(jsonRequest);
+            String response = bookService.convertToString(books);
+            return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e);
         }

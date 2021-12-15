@@ -1,7 +1,6 @@
-package com.demo.librarychallenge.models;
+package com.demo.librarychallenge.models.entity;
 
 import lombok.*;
-import java.util.Date;
 
 @Builder
 @Getter
