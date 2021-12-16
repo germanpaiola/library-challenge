@@ -5,12 +5,13 @@ import java.util.List;
 
 public class Library {
 
-    private List<Book> books;
+    private static List<Book> books;
     private static Library instance;
 
     public static Library getLibrary(){
         if(instance == null){
-            return new Library(new ArrayList<>());
+            instance = new Library(new ArrayList<>());
+            return instance;
         }else{
             return Library.getInstance();
         }

@@ -34,18 +34,21 @@ public class BookService {
 
     public void updateBook(Book book){
         List<Book> books = Library.getLibrary().getBooks();
-        for(Book foundBook : books){
-            if(book.equals(foundBook)){
-                book = foundBook;
+        for(int i = 0; i < books.size(); i++){
+            if(book.equals(books.get(i))){
+                books.set(i, book);
+                //update all books
             }
         }
     }
 
     public void deleteBook(Book book){
         List<Book> books = Library.getLibrary().getBooks();
-        for(Book foundBook : books){
-            if(book.equals(foundBook)){
-                book = foundBook;
+        for(int i = 0; i < books.size(); i++){
+            if(book.equals(books.get(i))){
+                books.remove(i);
+                return;
+                //delete first found;
             }
         }
     }
