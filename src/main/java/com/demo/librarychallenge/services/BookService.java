@@ -1,5 +1,7 @@
 package com.demo.librarychallenge.services;
 
+import com.demo.librarychallenge.exceptions.InvalidRequestException;
+import com.demo.librarychallenge.exceptions.NotFoundException;
 import com.demo.librarychallenge.models.entity.Book;
 import com.demo.librarychallenge.models.entity.Library;
 import com.demo.librarychallenge.models.entity.QueryRequest;
@@ -37,33 +39,53 @@ public class BookService {
         for(int i = 0; i < books.size(); i++){
             if(book.equals(books.get(i))){
                 books.set(i, book);
-                //update all books
+                return;
+                //update first book found
             }
         }
+        throw new NotFoundException("Book not found for title.");
     }
 
-    public void deleteBook(Book book){
+    public void deleteBook(String json){
+        QueryRequest request = gson.fromJson(json, QueryRequest.class);
+        checkRequest(request);
         List<Book> books = Library.getLibrary().getBooks();
         for(int i = 0; i < books.size(); i++){
-            if(book.equals(books.get(i))){
+            if(books.get(i).getTitle().equalsIgnoreCase(request.getTitle())){
                 books.remove(i);
                 return;
                 //delete first found;
             }
         }
+        throw new NotFoundException("Book not found for title.");
     }
 
     public List<Book> getBook(String json){
         QueryRequest request = gson.fromJson(json, QueryRequest.class);
+        checkRequest(request);
         List<Book> books = Library.getLibrary().getBooks();
         List<Book> foundBooks = new ArrayList<>();
         for(Book book : books){
-            if(book.getTitle().toLowerCase(Locale.ROOT).matches(request.getTitle().toLowerCase(Locale.ROOT))){
+            if(book.getTitle().toLowerCase().contains(request.getTitle().toLowerCase())){
                 foundBooks.add(book);
+                System.out.println(book.getAuthor());
             }
+        }
+        if(foundBooks.size() == 0){
+            throw new NotFoundException("Book not found for title.");
         }
         return foundBooks;
     }
 
+    public void checkRequest(QueryRequest req){
+        if(req.getTitle() == null){
+            throw new InvalidRequestException("Invalid Request");
+        }
+    }
 
+    public void checkBook(Book book){
+        if(book.getTitle() == null){
+            throw new InvalidRequestException("Invalid Request");
+        }
+    }
 }

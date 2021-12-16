@@ -22,9 +22,10 @@ public class BookController {
     public ResponseEntity createBook(@RequestBody String jsonRequest){
         try{
             Book book = bookService.convertToObject(jsonRequest);
+            bookService.checkBook(book);
             bookService.saveToList(book);
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("Created");
     }
@@ -33,9 +34,10 @@ public class BookController {
     public ResponseEntity updateBook(@RequestBody String jsonRequest){
         try{
             Book book = bookService.convertToObject(jsonRequest);
+            bookService.checkBook(book);
             bookService.updateBook(book);
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("Updated");
     }
@@ -43,10 +45,9 @@ public class BookController {
     @DeleteMapping
     public ResponseEntity deleteBook(@RequestBody String jsonRequest){
         try{
-            Book book = bookService.convertToObject(jsonRequest);
-            bookService.deleteBook(book);
+            bookService.deleteBook(jsonRequest);
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("Deleted");
     }
@@ -58,7 +59,7 @@ public class BookController {
             String response = bookService.convertToString(books);
             return ResponseEntity.ok(response);
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
