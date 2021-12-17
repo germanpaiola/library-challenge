@@ -26,6 +26,10 @@ public class BookService {
         return gson.fromJson(json, Book.class);
     }
 
+    public List convertToList(String json){
+        return gson.fromJson(json, ArrayList.class);
+    }
+
     public String convertToString(Object obj){
         return gson.toJson(obj);
     }
@@ -60,15 +64,15 @@ public class BookService {
         throw new NotFoundException("Book not found for title.");
     }
 
-    public List<Book> getBook(String json){
-        QueryRequest request = gson.fromJson(json, QueryRequest.class);
-        checkRequest(request);
+    public List<Book> getBook(String title){
+
         List<Book> books = Library.getLibrary().getBooks();
         List<Book> foundBooks = new ArrayList<>();
+
         for(Book book : books){
-            if(book.getTitle().toLowerCase().contains(request.getTitle().toLowerCase())){
+            if(book.getTitle().toLowerCase().contains(title)){
                 foundBooks.add(book);
-                System.out.println(book.getAuthor());
+
             }
         }
         if(foundBooks.size() == 0){
