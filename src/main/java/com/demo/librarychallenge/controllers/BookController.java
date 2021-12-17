@@ -2,6 +2,7 @@ package com.demo.librarychallenge.controllers;
 
 
 import com.demo.librarychallenge.models.entity.Book;
+import com.demo.librarychallenge.models.entity.QueryRequest;
 import com.demo.librarychallenge.services.BookService;
 import com.demo.librarychallenge.services.RequestService;
 import org.apache.http.HttpEntity;
@@ -56,17 +57,19 @@ public class BookController {
         return ResponseEntity.ok("Deleted");
     }
 
-    @GetMapping("/get{title}{recursive}")
-    public ResponseEntity getBook(@RequestParam String title, @RequestParam(defaultValue = "false") String recursive){
+    @PostMapping("/get{strict}")
+    @ResponseBody
+    public ResponseEntity getBook(@RequestBody String jsonRequest, @RequestParam(defaultValue = "true") String strict){
         try{
-            List<Book> books = bookService.getBook(title);
+            QueryRequest queryRequest = bookService.getGson().fromJson(jsonRequest, QueryRequest.class);
+            List<Book> books = bookService.getBook(queryRequest.getTitle(), strict);
             String response = bookService.convertToString(books);
-            if(recursive.equals("false")){
-                System.out.println(recursive);
-                List<Book> films = requestService.request(title, bookService);
-                books.addAll(films);
-                response = bookService.convertToString(books);
+
+            if(strict.equals("true")){
+                System.out.println(strict);
+                response = bookService.convertToString(bookService.getFilms(requestService, books));
             }
+
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());

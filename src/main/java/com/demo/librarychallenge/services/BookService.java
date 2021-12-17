@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class BookService {
@@ -19,6 +18,14 @@ public class BookService {
 
     @Autowired
     public BookService(Gson gson) {
+        this.gson = gson;
+    }
+
+    public Gson getGson() {
+        return gson;
+    }
+
+    public void setGson(Gson gson) {
         this.gson = gson;
     }
 
@@ -64,13 +71,13 @@ public class BookService {
         throw new NotFoundException("Book not found for title.");
     }
 
-    public List<Book> getBook(String title){
+    public List<Book> getBook(String title, String strict){
 
         List<Book> books = Library.getLibrary().getBooks();
         List<Book> foundBooks = new ArrayList<>();
 
         for(Book book : books){
-            if(book.getTitle().toLowerCase().contains(title)){
+            if(book.getTitle().toLowerCase().contains(title.toLowerCase()) && strict.equals("true") || book.getTitle().equalsIgnoreCase(title)){
                 foundBooks.add(book);
 
             }
@@ -91,5 +98,16 @@ public class BookService {
         if(book.getTitle() == null){
             throw new InvalidRequestException("Invalid Request");
         }
+    }
+
+    public List getFilms(RequestService requestService, List<Book> books){
+        List composed = new ArrayList();
+        composed.addAll(books);
+        for(Book book : books){
+            QueryRequest queryRequest = new QueryRequest();
+            queryRequest.setTitle(book.getTitle());
+            composed.addAll(requestService.request(convertToString(queryRequest)));
+        }
+        return composed;
     }
 }

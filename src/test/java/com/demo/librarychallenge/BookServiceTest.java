@@ -53,7 +53,7 @@ public class BookServiceTest {
 
         queryRequest.setTitle("harry potter");
 
-        List<Book> bookList = service.getBook(service.convertToString(queryRequest));
+        List<Book> bookList = service.getBook(service.convertToString(queryRequest), "true");
         Assertions.assertEquals(3, bookList.size());
         Assertions.assertEquals( books[4].getAuthor(), bookList.get(0).getAuthor());
         Assertions.assertEquals(books[1].getAuthor(), bookList.get(1).getAuthor());

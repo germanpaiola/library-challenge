@@ -1,8 +1,13 @@
 package com.demo.librarychallenge.services;
 
+import com.demo.librarychallenge.models.entity.Film;
+import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -16,17 +21,26 @@ import java.util.List;
 @Service
 public class RequestService {
 
-    @Autowired
-    public RequestService(){};
+    private Gson gson;
 
-    public List request(String title, BookService bookService) {
+    @Autowired
+    public RequestService(Gson gson){
+        this.gson = gson;
+    };
+
+    public List request(String queryString) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet("http://localhost:8081/api/film/get?title=" + title + "&recursive=true");
+        HttpPost request = new HttpPost("http://localhost:8081/api/film/get?strict=false");
+        StringEntity requestEntity = new StringEntity(
+                queryString,
+                ContentType.APPLICATION_JSON);
+        request.setEntity(requestEntity);
+
         try{
             CloseableHttpResponse response = httpClient.execute(request);
             HttpEntity entity = response.getEntity();
             if (entity != null) {
-                return bookService.convertToList(EntityUtils.toString(entity));
+                return (ArrayList<Film>) gson.fromJson(EntityUtils.toString(entity), ArrayList.class);
             }else{
                 return new ArrayList<>();
             }
@@ -35,4 +49,6 @@ public class RequestService {
             return new ArrayList<>();
         }
     }
+
+
 }
